@@ -1,0 +1,1169 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Application Portal</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    background: #f4f6fb;
+    font-family: Arial, sans-serif;
+    color: #25344a;
+}
+
+.navbar {
+    background: white;
+    padding: 15px 5%;
+    box-shadow: 0 2px 8px #0000000d;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: #183b70;
+    font-size: 23px;
+}
+
+.main-container {
+    max-width: 1050px;
+    margin: 35px auto;
+    padding: 0 15px;
+}
+
+.form-card {
+    background: white;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 5px 25px #0000000a;
+}
+
+.page-heading {
+    color: #183b70;
+    font-weight: 700;
+}
+
+.progress {
+    height: 9px;
+    border-radius: 10px;
+    background: #e5eaf2;
+}
+
+.progress-bar {
+    background: #183b70;
+    transition: width .3s ease;
+}
+
+.step-labels {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    margin: 15px 0 30px;
+    overflow-x: auto;
+}
+
+.step-label {
+    font-size: 12px;
+    color: #777;
+    text-align: center;
+    min-width: 75px;
+}
+
+.step-label.active {
+    color: #183b70;
+    font-weight: 700;
+}
+
+.step-label.completed {
+    color: #198754;
+}
+
+.section-title {
+    color: #183b70;
+    font-weight: 700;
+    border-bottom: 1px solid #e8edf3;
+    padding-bottom: 12px;
+    margin-bottom: 25px;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.form-control, .form-select {
+    padding: 11px;
+    border-radius: 7px;
+    border-color: #dce2ea;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #2864a8;
+    box-shadow: 0 0 0 3px #2864a81a;
+}
+
+.dynamic-card {
+    border: 1px solid #e0e5ed;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background: #fcfdff;
+}
+
+.dynamic-card h6 {
+    color: #183b70;
+    font-weight: 700;
+}
+
+.add-btn {
+    border: 1px dashed #183b70;
+    background: #f3f7ff;
+    color: #183b70;
+    padding: 9px 17px;
+    border-radius: 7px;
+    font-weight: 600;
+}
+
+.remove-btn {
+    float: right;
+}
+
+.btn-primary-custom {
+    background: #183b70;
+    color: white;
+    border: none;
+    padding: 11px 25px;
+    border-radius: 7px;
+}
+
+.btn-primary-custom:hover {
+    background: #102b52;
+    color: white;
+}
+
+.btn-secondary-custom {
+    background: #e9edf4;
+    color: #333;
+    border: none;
+    padding: 11px 25px;
+    border-radius: 7px;
+}
+
+.form-step { display: none; }
+.form-step.active { display: block; }
+
+.payment-box {
+    background: #f1f6ff;
+    border-radius: 10px;
+    padding: 25px;
+    text-align: center;
+}
+
+.fee {
+    font-size: 32px;
+    font-weight: 700;
+    color: #183b70;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background: white;
+    color: #777;
+}
+
+@media(max-width: 600px) {
+    .form-card { padding: 18px; }
+    .step-label { min-width: 85px; }
+    .main-container { margin-top: 15px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-grid-1x2-fill"></i> MyPortal
+        </a>
+        <span class="text-muted small">Application Registration</span>
+    </div>
+</nav>
+
+
+<main class="main-container">
+
+<div class="form-card">
+
+    <div class="text-center mb-4">
+        <h2 class="page-heading">Application Form</h2>
+        <p class="text-muted">
+            Complete all sections to submit your application.
+        </p>
+    </div>
+
+    <!-- PROGRESS BAR -->
+
+    <div class="progress">
+        <div class="progress-bar"
+             id="progressBar"
+             style="width:12.5%">
+        </div>
+    </div>
+
+    <div class="step-labels" id="stepLabels">
+        <div class="step-label active">Personal</div>
+        <div class="step-label">Education</div>
+        <div class="step-label">Experience</div>
+        <div class="step-label">Language</div>
+        <div class="step-label">Documents</div>
+        <div class="step-label">Questions</div>
+        <div class="step-label">Declaration</div>
+        <div class="step-label">Payment</div>
+    </div>
+
+
+<form id="applicationForm"
+      enctype="multipart/form-data">
+
+
+<!-- STEP 1: PERSONAL DETAILS -->
+
+<section class="form-step active">
+
+<h4 class="section-title">1. Personal Information</h4>
+
+<div class="row g-3">
+
+    <div class="col-md-6">
+        <label class="form-label">First Name *</label>
+        <input type="text" class="form-control"
+               name="first_name" required>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Last Name *</label>
+        <input type="text" class="form-control"
+               name="last_name" required>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Gender *</label>
+        <select class="form-select" name="gender" required>
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+            <option>Prefer not to say</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Date of Birth *</label>
+        <input type="date" class="form-control"
+               name="dob" required>
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label">Birthmark</label>
+        <textarea class="form-control"
+                  name="birthmark"
+                  rows="2"
+                  placeholder="Enter birthmark identification details"></textarea>
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- STEP 2: EDUCATION -->
+
+<section class="form-step">
+
+<h4 class="section-title">2. Educational Details</h4>
+
+<div id="educationContainer"></div>
+
+<button type="button" class="add-btn"
+        onclick="addEducation()">
+    <i class="bi bi-plus-circle"></i> Add Education
+</button>
+
+</section>
+
+
+<!-- STEP 3: EXPERIENCE -->
+
+<section class="form-step">
+
+<h4 class="section-title">3. Work Experience</h4>
+
+<div id="experienceContainer"></div>
+
+<button type="button" class="add-btn"
+        onclick="addExperience()">
+    <i class="bi bi-plus-circle"></i> Add Experience
+</button>
+
+</section>
+
+
+<!-- STEP 4: LANGUAGE -->
+
+<section class="form-step">
+
+<h4 class="section-title">4. Language Details</h4>
+
+<div id="languageContainer"></div>
+
+<button type="button" class="add-btn"
+        onclick="addLanguage()">
+    <i class="bi bi-plus-circle"></i> Add Language
+</button>
+
+</section>
+
+
+<!-- STEP 5: DOCUMENTS -->
+
+<section class="form-step">
+
+<h4 class="section-title">5. Upload Documents</h4>
+
+<div class="row g-3">
+
+    <div class="col-md-6">
+        <label class="form-label">Resume *</label>
+        <input type="file" class="form-control"
+               name="resume"
+               accept=".pdf,.doc,.docx"
+               required>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">CV</label>
+        <input type="file" class="form-control"
+               name="cv"
+               accept=".pdf,.doc,.docx">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Passport Photograph</label>
+        <input type="file" class="form-control"
+               name="photograph"
+               accept=".jpg,.jpeg,.png">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Other Supporting Documents</label>
+        <input type="file" class="form-control"
+               name="other_documents"
+               accept=".pdf,.jpg,.jpeg,.png"
+               multiple>
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- STEP 6: ORGANISATION QUESTIONS -->
+
+<section class="form-step">
+
+<h4 class="section-title">6. Organisation Questions</h4>
+
+<div class="mb-3">
+    <label class="form-label">
+        Why do you want to join our organisation? *
+    </label>
+    <textarea class="form-control"
+              name="joining_reason"
+              rows="3" required></textarea>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">
+        What are your key strengths? *
+    </label>
+    <textarea class="form-control"
+              name="strengths"
+              rows="3" required></textarea>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">
+        What are your career goals?
+    </label>
+    <textarea class="form-control"
+              name="career_goals"
+              rows="3"></textarea>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">
+        Are you willing to relocate? *
+    </label>
+    <select class="form-select"
+            name="relocation"
+            required>
+        <option value="">Select</option>
+        <option>Yes</option>
+        <option>No</option>
+    </select>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">
+        Expected Salary (Annual)
+    </label>
+    <input type="number"
+           class="form-control"
+           name="expected_salary"
+           min="0">
+</div>
+
+</section>
+
+
+<!-- STEP 7: DECLARATION -->
+
+<section class="form-step">
+
+<h4 class="section-title">7. Declaration & Terms</h4>
+
+<div class="alert alert-info">
+    Please review your application details before proceeding
+    to payment.
+</div>
+
+<div class="mb-3">
+    <label class="form-label">
+        Declaration
+    </label>
+    <p class="text-muted">
+        I hereby declare that the information and documents
+        provided by me are accurate and complete to the best
+        of my knowledge.
+    </p>
+</div>
+
+<div class="form-check mb-3">
+    <input class="form-check-input"
+           type="checkbox"
+           name="declaration"
+           id="declaration"
+           required>
+
+    <label class="form-check-label"
+           for="declaration">
+        I confirm that all information provided is correct.
+    </label>
+</div>
+
+<div class="form-check mb-3">
+    <input class="form-check-input"
+           type="checkbox"
+           name="terms"
+           id="terms"
+           required>
+
+    <label class="form-check-label"
+           for="terms">
+        I agree to the
+        <a href="/terms" target="_blank">
+            Terms and Conditions
+        </a>
+        and Privacy Policy.
+    </label>
+</div>
+
+</section>
+
+
+<!-- STEP 8: PAYMENT -->
+
+<section class="form-step">
+
+<h4 class="section-title">8. Application Fee & Payment</h4>
+
+<div class="payment-box">
+
+    <p class="text-muted">Application Processing Fee</p>
+
+    <div class="fee">₹500</div>
+
+    <p class="text-muted">
+        One-time application fee
+    </p>
+
+    <hr>
+
+    <div class="text-start">
+
+        <label class="form-label">
+            Select Payment Method
+        </label>
+
+        <div class="form-check mb-2">
+            <input class="form-check-input"
+                   type="radio"
+                   name="payment_method"
+                   value="upi"
+                   id="upi"
+                   checked>
+
+            <label class="form-check-label" for="upi">
+                <i class="bi bi-phone"></i> UPI
+            </label>
+        </div>
+
+        <div class="form-check mb-3">
+            <input class="form-check-input"
+                   type="radio"
+                   name="payment_method"
+                   value="netbanking"
+                   id="netbanking">
+
+            <label class="form-check-label"
+                   for="netbanking">
+                <i class="bi bi-bank"></i> Net Banking
+            </label>
+        </div>
+
+    </div>
+
+    <div class="alert alert-warning text-start small">
+        Your application will be submitted only after
+        successful payment verification.
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- NAVIGATION BUTTONS -->
+
+<div class="d-flex justify-content-between mt-4">
+
+    <button type="button"
+            class="btn-secondary-custom"
+            id="previousBtn"
+            onclick="changeStep(-1)"
+            disabled>
+        <i class="bi bi-arrow-left"></i> Previous
+    </button>
+
+    <button type="button"
+            class="btn-primary-custom"
+            id="nextBtn"
+            onclick="changeStep(1)">
+        Next <i class="bi bi-arrow-right"></i>
+    </button>
+
+    <button type="button"
+            class="btn-primary-custom"
+            id="submitBtn"
+            onclick="submitApplication()"
+            style="display:none">
+        Pay & Submit Application
+        <i class="bi bi-check-circle"></i>
+    </button>
+
+</div>
+
+<div id="message" class="mt-3 text-center"></div>
+
+</form>
+
+</div>
+</main>
+
+
+<footer>
+    © 2026 MyPortal. All Rights Reserved.
+</footer>
+
+
+<!-- DYNAMIC FORM TEMPLATES -->
+
+<template id="educationTemplate">
+<div class="dynamic-card education-item">
+
+    <button type="button"
+            class="btn btn-sm btn-outline-danger remove-btn"
+            onclick="removeItem(this)">
+        <i class="bi bi-trash"></i> Remove
+    </button>
+
+    <h6>Education Record</h6>
+
+    <div class="row g-3 mt-1">
+
+        <div class="col-md-6">
+            <label class="form-label">Qualification *</label>
+            <select class="form-select"
+                    name="education_level[]"
+                    required>
+                <option value="">Select Qualification</option>
+                <option>High School</option>
+                <option>Senior Secondary</option>
+                <option>Diploma</option>
+                <option>Graduation</option>
+                <option>Postgraduation</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">College / School Name *</label>
+            <input type="text" class="form-control"
+                   name="college_name[]" required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">University / Board Name *</label>
+            <input type="text" class="form-control"
+                   name="university_name[]" required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Marks / Percentage *</label>
+            <input type="number" class="form-control"
+                   name="marks[]" min="0"
+                   max="100" step="0.01" required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Start Date *</label>
+            <input type="date" class="form-control"
+                   name="education_start[]" required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">End Date *</label>
+            <input type="date" class="form-control"
+                   name="education_end[]" required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Marksheet Upload *</label>
+            <input type="file" class="form-control"
+                   name="marksheet[]"
+                   accept=".pdf,.jpg,.jpeg,.png"
+                   required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Degree / Certificate Upload</label>
+            <input type="file" class="form-control"
+                   name="degree[]" 
+                   accept=".pdf,.jpg,.jpeg,.png">
+        </div>
+
+    </div>
+</div>
+</template>
+
+
+<template id="experienceTemplate">
+<div class="dynamic-card experience-item">
+
+    <button type="button"
+            class="btn btn-sm btn-outline-danger remove-btn"
+            onclick="removeItem(this)">
+        <i class="bi bi-trash"></i> Remove
+    </button>
+
+    <h6>Experience Record</h6>
+
+    <div class="row g-3 mt-1">
+
+        <div class="col-md-6">
+            <label class="form-label">Organisation Name *</label>
+            <input type="text" class="form-control"
+                   name="organisation[]" required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Designation / Role *</label>
+            <input type="text" class="form-control"
+                   name="designation[]" required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Start Date *</label>
+            <input type="date" class="form-control"
+                   name="experience_start[]" required>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-control"
+                   name="experience_end[]">
+        </div>
+
+        <div class="col-md-12">
+            <label class="form-label">
+                Roles & Responsibilities *
+            </label>
+            <textarea class="form-control"
+                      name="responsibilities[]"
+                      rows="3" required></textarea>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Offer Letter</label>
+            <input type="file" class="form-control"
+                   name="offer_letter[]"
+                   accept=".pdf,.jpg,.jpeg,.png">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Experience Letter</label>
+            <input type="file" class="form-control"
+                   name="experience_letter[]"
+                   accept=".pdf,.jpg,.jpeg,.png">
+        </div>
+
+    </div>
+</div>
+</template>
+
+
+<template id="languageTemplate">
+<div class="dynamic-card language-item">
+
+    <button type="button"
+            class="btn btn-sm btn-outline-danger remove-btn"
+            onclick="removeItem(this)">
+        <i class="bi bi-trash"></i>
+    </button>
+
+    <h6>Language Record</h6>
+
+    <div class="row g-3 mt-1">
+
+        <div class="col-md-6">
+            <label class="form-label">Language *</label>
+            <input type="text" class="form-control"
+                   name="language[]" required
+                   placeholder="e.g. English, Hindi">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Proficiency *</label>
+            <select class="form-select"
+                    name="proficiency[]" required>
+                <option value="">Select Level</option>
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Advanced</option>
+                <option>Native</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Reading</label>
+            <select class="form-select" name="reading[]">
+                <option>Yes</option>
+                <option>No</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Writing</label>
+            <select class="form-select" name="writing[]">
+                <option>Yes</option>
+                <option>No</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Speaking</label>
+            <select class="form-select" name="speaking[]">
+                <option>Yes</option>
+                <option>No</option>
+            </select>
+        </div>
+
+    </div>
+</div>
+</template>
+
+
+<script>
+
+// =================================
+// 1. MULTI STEP FORM
+// =================================
+
+let currentStep = 0;
+
+const steps = document.querySelectorAll(".form-step");
+const labels = document.querySelectorAll(".step-label");
+
+const progressBar = document.getElementById("progressBar");
+
+const previousBtn = document.getElementById("previousBtn");
+const nextBtn = document.getElementById("nextBtn");
+const submitBtn = document.getElementById("submitBtn");
+
+function updateProgress() {
+
+    const progress = ((currentStep + 1) / steps.length) * 100;
+
+    progressBar.style.width = progress + "%";
+
+    labels.forEach((label, index) => {
+
+        label.classList.toggle("active", index === currentStep);
+
+        label.classList.toggle("completed", index < currentStep);
+
+    });
+
+    steps.forEach((step, index) => {
+
+        step.classList.toggle("active", index === currentStep);
+
+    });
+
+    previousBtn.disabled = currentStep === 0;
+
+    nextBtn.style.display =
+        currentStep === steps.length - 1 ? "none" : "block";
+
+    submitBtn.style.display =
+        currentStep === steps.length - 1 ? "block" : "none";
+
+}
+
+function validateCurrentStep() {
+
+    const currentSection = steps[currentStep];
+
+    const inputs = currentSection.querySelectorAll(
+        "input, select, textarea"
+    );
+
+    for (const input of inputs) {
+
+        if (!input.checkValidity()) {
+
+            input.reportValidity();
+
+            return false;
+        }
+
+    }
+
+    // Validate date ranges in repeatable records
+
+    if (currentStep === 1) {
+
+        for (const item of document.querySelectorAll(".education-item")) {
+
+            const start = item.querySelector('[name="education_start[]"]').value;
+            const end = item.querySelector('[name="education_end[]"]').value;
+
+            if (start && end && end < start) {
+                alert("Education end date cannot be before start date.");
+                return false;
+            }
+        }
+    }
+
+    if (currentStep === 2) {
+
+        for (const item of document.querySelectorAll(".experience-item")) {
+
+            const start = item.querySelector('[name="experience_start[]"]').value;
+            const end = item.querySelector('[name="experience_end[]"]').value;
+
+            if (start && end && end < start) {
+                alert("Experience end date cannot be before start date.");
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+function changeStep(direction) {
+
+    if (direction > 0 && !validateCurrentStep()) {
+        return;
+    }
+
+    currentStep += direction;
+
+    updateProgress();
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+// =================================
+// 2. DYNAMIC ADD MORE
+// =================================
+
+function addItem(templateId, containerId) {
+
+    const template = document.getElementById(templateId);
+
+    const clone = template.content.cloneNode(true);
+
+    document.getElementById(containerId).appendChild(clone);
+
+}
+
+function addEducation() {
+
+    addItem("educationTemplate", "educationContainer");
+
+}
+
+function addExperience() {
+
+    addItem("experienceTemplate", "experienceContainer");
+
+}
+
+function addLanguage() {
+
+    addItem("languageTemplate", "languageContainer");
+
+}
+
+function removeItem(button) {
+
+    const card = button.closest(".dynamic-card");
+
+    const parent = card.parentElement;
+
+    if (parent.children.length <= 1) {
+        alert("At least one record is required.");
+        return;
+    }
+
+    card.remove();
+
+}
+
+
+// =================================
+// 3. INITIAL RECORDS
+// =================================
+
+addEducation();
+addExperience();
+addLanguage();
+
+updateProgress();
+
+
+// =================================
+// 4. FINAL PAYMENT & SUBMISSION
+// =================================
+
+async function submitApplication() {
+
+    if (!validateCurrentStep()) {
+        return;
+    }
+
+    const form = document.getElementById("applicationForm");
+
+    const message = document.getElementById("message");
+
+    const submitButton = document.getElementById("submitBtn");
+
+    const formData = new FormData(form);
+
+    const paymentMethod = formData.get("payment_method");
+
+    submitButton.disabled = true;
+
+    message.textContent = "Creating application and payment order...";
+
+    try {
+
+        // Save application and create Razorpay order on backend.
+
+        const response = await fetch(
+            "/api/applications/create-order",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Unable to create payment order.");
+        }
+
+        const order = await response.json();
+
+        const options = {
+
+            key: order.key_id,
+
+            amount: order.amount,
+
+            currency: order.currency,
+
+            name: "MyPortal",
+
+            description: "Application Processing Fee",
+
+            order_id: order.order_id,
+
+            prefill: {
+                name:
+                    formData.get("first_name") + " " +
+                    formData.get("last_name"),
+
+                email: order.email,
+
+            },
+
+            config: {
+                display: {
+                    blocks: {
+                        preferred: {
+                            name: "Preferred Payment Methods",
+                            instruments: [
+                                {
+                                    method: paymentMethod
+                                }
+                            ]
+                        }
+                    },
+                    sequence: ["block.preferred"],
+                    preferences: {
+                        show_default_blocks: true
+                    }
+                }
+            },
+
+            handler: async function(payment) {
+
+                try {
+
+                    message.textContent =
+                        "Verifying payment. Please wait...";
+
+                    const verification = await fetch(
+                        "/api/payments/verify",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                application_id: order.application_id,
+
+                                razorpay_order_id:
+                                    payment.razorpay_order_id,
+
+                                razorpay_payment_id:
+                                    payment.razorpay_payment_id,
+
+                                razorpay_signature:
+                                    payment.razorpay_signature
+
+                            })
+                        }
+                    );
+
+                    const result = await verification.json();
+
+                    if (!verification.ok || !result.verified) {
+
+                        throw new Error(
+                            "Payment verification is pending or unsuccessful."
+                        );
+
+                    }
+
+                    // Redirect only after verified payment.
+
+                    window.location.href =
+                        "/application/success/" +
+                        encodeURIComponent(result.application_id);
+
+                } catch (error) {
+
+                    message.textContent = error.message;
+
+                    submitButton.disabled = false;
+
+                }
+
+            },
+
+            modal: {
+
+                ondismiss: function() {
+
+                    message.textContent =
+                        "Payment cancelled. Your application remains pending.";
+
+                    submitButton.disabled = false;
+
+                }
+
+            },
+
+            theme: {
+                color: "#183b70"
+            }
+
+        };
+
+        const checkout = new Razorpay(options);
+
+        checkout.on("payment.failed", function() {
+
+            message.textContent =
+                "Payment failed. Please retry.";
+
+            submitButton.disabled = false;
+
+        });
+
+        checkout.open();
+
+    } catch (error) {
+
+        message.textContent = error.message;
+
+        submitButton.disabled = false;
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

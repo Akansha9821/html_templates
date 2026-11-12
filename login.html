@@ -1,0 +1,641 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Application Portal</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+
+        .navbar {
+            background: #ffffff;
+            padding: 15px 5%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+            color: #183b70;
+        }
+
+        /* Main Container */
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 35px 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 620px;
+            background: #ffffff;
+            border-radius: 18px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        /* Left Image Section */
+
+        .image-section {
+            background:
+                linear-gradient(
+                    rgba(14, 43, 85, 0.65),
+                    rgba(14, 43, 85, 0.75)
+                ),
+                url("https://images.unsplash.com/photo-1497366754035-f200968a6e72")
+                center/cover no-repeat;
+
+            color: white;
+            padding: 55px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .image-section h1 {
+            font-size: 38px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .image-section p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #e6eaf1;
+            margin-top: 20px;
+        }
+
+        .image-content {
+            max-width: 420px;
+        }
+
+        .image-badge {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 12px 18px;
+            border-radius: 10px;
+            width: fit-content;
+        }
+
+        /* Right Form Section */
+
+        .form-section {
+            padding: 45px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-section h2 {
+            font-size: 29px;
+            font-weight: 700;
+            color: #183b70;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #777;
+            margin-bottom: 28px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .form-control {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .form-control:focus {
+            border-color: #2864a8;
+            box-shadow: 0 0 0 3px rgba(40,100,168,0.1);
+        }
+
+        .password-box {
+            position: relative;
+        }
+
+        .password-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #777;
+        }
+
+        .forgot-link {
+            color: #2864a8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-login {
+            background: #183b70;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            border: none;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .btn-login:hover {
+            background: #102b52;
+            color: white;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #999;
+            margin: 25px 0;
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            height: 1px;
+            background: #ddd;
+            flex: 1;
+        }
+
+        /* Social Login */
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .social-btn:hover {
+            background: #f5f7fa;
+        }
+
+        .social-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .signup-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .signup-text a {
+            color: #2864a8;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .back-link {
+            color: #2864a8;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .form-view {
+            display: none;
+        }
+
+        .form-view.active {
+            display: block;
+        }
+
+        /* Footer */
+
+        footer {
+            text-align: center;
+            padding: 18px;
+            background: #fff;
+            color: #777;
+            font-size: 13px;
+        }
+
+        /* Responsive Design */
+
+        @media(max-width: 768px) {
+
+            main {
+                padding: 20px 12px;
+            }
+
+            .login-container {
+                grid-template-columns: 1fr;
+            }
+
+            .image-section {
+                min-height: 240px;
+                padding: 30px;
+            }
+
+            .image-section h1 {
+                font-size: 27px;
+            }
+
+            .image-section p {
+                font-size: 14px;
+            }
+
+            .form-section {
+                padding: 35px 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+
+<nav class="navbar">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-grid-1x2-fill"></i>
+            MyPortal
+        </a>
+
+        <div>
+            <span class="text-muted small">Need help?</span>
+            <a href="mailto:support@example.com"
+               class="text-primary text-decoration-none ms-1">
+                Contact Us
+            </a>
+        </div>
+    </div>
+</nav>
+
+
+<!-- Main -->
+
+<main>
+
+    <div class="login-container">
+
+        <!-- Left Image -->
+
+        <div class="image-section">
+
+            <div>
+                <div class="image-badge">
+                    <i class="bi bi-shield-check"></i>
+                    Secure Application Portal
+                </div>
+            </div>
+
+            <div class="image-content">
+
+                <h1>
+                    Welcome Back!
+                    <br>
+                    Manage Your Journey With Us.
+                </h1>
+
+                <p>
+                    Access your account, manage your applications
+                    and explore new opportunities through our
+                    secure application portal.
+                </p>
+
+            </div>
+
+            <div>
+                <small>
+                    <i class="bi bi-lock-fill"></i>
+                    Your information is safe and secure.
+                </small>
+            </div>
+
+        </div>
+
+
+        <!-- Right Login Form -->
+
+        <div class="form-section">
+
+            <!-- LOGIN VIEW -->
+
+            <div id="loginView" class="form-view active">
+
+                <h2>Sign In</h2>
+
+                <p class="subtitle">
+                    Enter your credentials to access your account.
+                </p>
+
+                <form action="/login" method="POST">
+
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+
+                        <input type="email"
+                               class="form-control"
+                               name="email"
+                               placeholder="Enter your email"
+                               required>
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <div class="d-flex justify-content-between">
+                            <label class="form-label">Password</label>
+
+                            <a href="#" class="forgot-link"
+                               onclick="showView('forgotView'); return false;">
+                                Forgot Password?
+                            </a>
+                        </div>
+
+                        <div class="password-box">
+
+                            <input type="password"
+                                   class="form-control"
+                                   id="loginPassword"
+                                   name="password"
+                                   placeholder="Enter password"
+                                   required>
+
+                            <i class="bi bi-eye"
+                               onclick="togglePassword('loginPassword', this)">
+                            </i>
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="remember"
+                               id="remember">
+
+                        <label class="form-check-label small"
+                               for="remember">
+                            Remember me
+                        </label>
+                    </div>
+
+
+                    <button type="submit" class="btn-login">
+                        Sign In <i class="bi bi-arrow-right"></i>
+                    </button>
+
+                </form>
+
+
+                <div class="divider">OR CONTINUE WITH</div>
+
+
+                <!-- Google Authentication -->
+
+                <a href="/auth/google" class="social-btn">
+
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg"
+                         alt="Google">
+
+                    Continue with Google
+
+                </a>
+
+
+                <!-- Microsoft Authentication -->
+
+                <a href="/auth/microsoft" class="social-btn">
+
+                    <img src="https://www.svgrepo.com/show/448239/microsoft.svg"
+                         alt="Microsoft">
+
+                    Continue with Microsoft
+
+                </a>
+
+
+                <div class="signup-text">
+
+                    Don't have an account?
+
+                    <a href="#"
+                       onclick="showView('signupView'); return false;">
+                        Create Account
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- SIGNUP VIEW -->
+
+            <div id="signupView" class="form-view">
+
+                <h2>Create Account</h2>
+
+                <p class="subtitle">
+                    Register to get started with our portal.
+                </p>
+
+                <form action="/signup" method="POST">
+
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text"
+                               class="form-control"
+                               name="full_name"
+                               placeholder="Enter full name"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email"
+                               class="form-control"
+                               name="email"
+                               placeholder="Enter email"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Mobile Number</label>
+                        <input type="tel"
+                               class="form-control"
+                               name="mobile"
+                               pattern="[0-9]{10}"
+                               placeholder="Enter mobile number"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+
+                        <input type="password"
+                               class="form-control"
+                               name="password"
+                               minlength="8"
+                               placeholder="Create password"
+                               required>
+                    </div>
+
+                    <button type="submit" class="btn-login">
+                        Create Account
+                    </button>
+
+                </form>
+
+                <div class="signup-text">
+                    Already have an account?
+
+                    <a href="#"
+                       onclick="showView('loginView'); return false;">
+                        Sign In
+                    </a>
+                </div>
+
+            </div>
+
+
+            <!-- FORGOT PASSWORD VIEW -->
+
+            <div id="forgotView" class="form-view">
+
+                <h2>Forgot Password?</h2>
+
+                <p class="subtitle">
+                    Enter your registered email address.
+                    We will send you a password reset link.
+                </p>
+
+                <form action="/forgot-password" method="POST">
+
+                    <div class="mb-4">
+                        <label class="form-label">Email Address</label>
+
+                        <input type="email"
+                               class="form-control"
+                               name="email"
+                               placeholder="Enter registered email"
+                               required>
+                    </div>
+
+                    <button type="submit" class="btn-login">
+                        Send Reset Link
+                    </button>
+
+                </form>
+
+                <div class="signup-text">
+                    <a href="#"
+                       onclick="showView('loginView'); return false;">
+                        <i class="bi bi-arrow-left"></i>
+                        Back to Login
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- Footer -->
+
+<footer>
+    © 2026 MyPortal. All Rights Reserved.
+</footer>
+
+
+<script>
+
+    // Switch between login, signup and forgot password
+
+    function showView(viewId) {
+
+        document.querySelectorAll(".form-view").forEach(view => {
+            view.classList.remove("active");
+        });
+
+        document.getElementById(viewId).classList.add("active");
+    }
+
+
+    // Show / Hide Password
+
+    function togglePassword(inputId, icon) {
+
+        const password = document.getElementById(inputId);
+
+        if (password.type === "password") {
+
+            password.type = "text";
+
+            icon.classList.remove("bi-eye");
+            icon.classList.add("bi-eye-slash");
+
+        } else {
+
+            password.type = "password";
+
+            icon.classList.remove("bi-eye-slash");
+            icon.classList.add("bi-eye");
+
+        }
+    }
+
+</script>
+
+</body>
+</html>
